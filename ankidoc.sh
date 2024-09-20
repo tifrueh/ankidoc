@@ -31,8 +31,8 @@ function generate_card() {
         exit 1
     fi
 
-    front_html=$(asciidoctor -e -o - ${card_front} | sed 's/"/""/g' | tr '\n' ' ')
-    back_html=$(asciidoctor -e -o - ${card_back} | sed 's/"/""/g' | tr '\n' ' ')
+    front_html=$(asciidoctor -e -o - ${card_front} | sed 's/"/""/g')
+    back_html=$(asciidoctor -e -o - ${card_back} | sed 's/"/""/g')
 
     echo "\"${card_id}\";\"${front_html}\";\"${back_html}\""
 }
