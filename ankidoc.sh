@@ -3,10 +3,10 @@
 help="Usage: ${0} <directory>"
 
 if [ $# -eq 2 ]; then
-    echo $help
+    echo $help 1>&2
     exit 1
 elif ! [ -d $1 ]; then
-    echo $help
+    echo $help 1>&2
     exit 1
 fi
 
@@ -24,10 +24,10 @@ function generate_card() {
     card_back="${cards_dir}/${card_id}.back"
 
     if ! [ -f $card_front ]; then
-        echo "${argv0}: ${card_front} not found"
+        echo "${argv0}: ${card_front} not found" 1>&2
         exit 1
     elif ! [ -f $card_back ]; then
-        echo "${argv0}: ${card_back} not found"
+        echo "${argv0}: ${card_back} not found" 1>&2
         exit 1
     fi
 
@@ -45,7 +45,7 @@ for file in *; do
     elif [ ${file##*.} = "back" ]; then
         continue
     else
-        echo "${argv0}: not processing ${file}"
+        echo "${argv0}: not processing ${file}" 1>&2
         continue
     fi
 done
