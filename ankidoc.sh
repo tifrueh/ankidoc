@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 
 help="Usage: ${0} <directory>"
 
