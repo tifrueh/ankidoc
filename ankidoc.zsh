@@ -31,17 +31,17 @@ function generate_card() {
         exit 1
     fi
 
-    front_html="$(asciidoctor -e -o - ${card_front} | sed -e 's/"/""/g' -e 's/\\/\\\\/g')"
-    back_html="$(asciidoctor -e -o - ${card_back} | sed -e 's/"/""/g' -e 's/\\/\\\\/g')"
+    front_html="$(asciidoctor -e -o - ${card_front} | sed -e 's/"/""/g')"
+    back_html="$(asciidoctor -e -o - ${card_back} | sed -e 's/"/""/g')"
 
-    printf "\"%s\";\"%s\";\"%s\"" "${card_id}" "${front_html}" "${back_html}"
+    printf '"%s";"%s";"%s"' "${card_id}" "${front_html}" "${back_html}"
 }
 
 echo $header
 
 for file in *; do
     if [ ${file##*.} = "front" ]; then
-        echo $(generate_card . ${file%.front})
+        printf '%s\n' "$(generate_card . ${file%.front})"
     elif [ ${file##*.} = "back" ]; then
         continue
     else
