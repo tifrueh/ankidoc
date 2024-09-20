@@ -34,7 +34,7 @@ function generate_card() {
     front_html="$(asciidoctor -e -o - ${card_front} | sed -e 's/"/""/g' -e 's/\\/\\\\\\\\/g')"
     back_html="$(asciidoctor -e -o - ${card_back} | sed -e 's/"/""/g' -e 's/\\/\\\\\\\\/g')"
 
-    echo "\"${card_id}\";\"${front_html}\";\"${back_html}\""
+    printf "\"%s\";\"%s\";\"%s\"" "${card_id}" "${front_html}" "${back_html}"
 }
 
 echo $header
