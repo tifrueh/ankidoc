@@ -3,10 +3,10 @@
 help="Usage: ${0} <directory>"
 
 if [ $# -ne 1 ]; then
-    echo $help 1>&2
+    printf '%s\n' "${help}" 1>&2
     exit 1
 elif ! [ -d "${1}" ]; then
-    echo $help 1>&2
+    printf '%s\n' "${help}" 1>&2
     exit 1
 fi
 
@@ -15,7 +15,11 @@ argv0="${0}"
 
 cd "${dir}"
 
-header="#separator semicolon\n#html true\n#columns id;question;answer\n"
+header='#separator semicolon
+#html true
+#columns id;question;answer
+
+'
 
 function generate_card() {
     cards_dir=$1
@@ -24,10 +28,10 @@ function generate_card() {
     card_back="${cards_dir}/${card_id}.back"
 
     if ! [ -f $card_front ]; then
-        echo "${argv0}: ${card_front} not found" 1>&2
+        printf '%s' "${argv0}: ${card_front} not found" 1>&2
         exit 1
     elif ! [ -f $card_back ]; then
-        echo "${argv0}: ${card_back} not found" 1>&2
+        printf '%s' "${argv0}: ${card_back} not found" 1>&2
         exit 1
     fi
 
@@ -37,7 +41,7 @@ function generate_card() {
     printf '"%s";"%s";"%s"' "${card_id}" "${front_html}" "${back_html}"
 }
 
-echo $header
+printf '%s' "${header}"
 
 for file in *; do
     if [ ${file##*.} = "front" ]; then
@@ -45,7 +49,7 @@ for file in *; do
     elif [ ${file##*.} = "back" ]; then
         continue
     else
-        echo "${argv0}: not processing ${file}" 1>&2
+        printf '%s\n' "${argv0}: not processing ${file}" 1>&2
         continue
     fi
 done
