@@ -5,15 +5,15 @@ help="Usage: ${0} <directory>"
 if [ $# -ne 1 ]; then
     echo $help 1>&2
     exit 1
-elif ! [ -d $1 ]; then
+elif ! [ -d "${1}" ]; then
     echo $help 1>&2
     exit 1
 fi
 
-dir=$1
-argv0=$0
+dir="${1}"
+argv0="${0}"
 
-cd $dir
+cd "${dir}"
 
 header="#separator semicolon\n#html true\n#columns id;question;answer\n"
 
