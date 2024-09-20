@@ -2,7 +2,7 @@
 
 help="Usage: ${0} <directory>"
 
-if [ $# -eq 2 ]; then
+if [ $# -ne 1 ]; then
     echo $help 1>&2
     exit 1
 elif ! [ -d $1 ]; then
