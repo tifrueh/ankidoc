@@ -4,18 +4,6 @@ help="Usage: ${0} [ qls ] <file> ..."
 
 qlist=0
 
-if [ "${1}" = "qls" ]; then
-    qlist=1
-    shift
-fi
-
-for file in $@; do
-    if ! [ -f $file ]; then
-        printf '%s\n' "${help}"
-        exit 1
-    fi
-done
-
 argv0="${0}"
 
 header='#separator semicolon
@@ -66,6 +54,18 @@ function qlist() {
         fi
     done
 }
+
+if [ "${1}" = "qls" ]; then
+    qlist=1
+    shift
+fi
+
+for file in $@; do
+    if ! [ -f $file ]; then
+        printf '%s\n' "${help}"
+        exit 1
+    fi
+done
 
 if [ $qlist -eq 1 ]; then
     qlist $@
