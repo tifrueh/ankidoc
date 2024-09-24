@@ -1,10 +1,10 @@
 #!/bin/sh
 
-help="Usage: ${0} [ qls ] <file> ..."
-
 qlist=0
 
-argv0="${0}"
+progname="${0##*/}"
+
+help="Usage: ${progname} [ qls ] <file> ..."
 
 header='#separator semicolon
 #html true
@@ -20,10 +20,10 @@ function generate_card() {
     card_back="${card_path%.*}.back"
 
     if ! [ -f $card_front ]; then
-        printf '%s' "${argv0}: ${card_front} not found" 1>&2
+        printf '%s' "${progname}: ${card_front} not found" 1>&2
         exit 1
     elif ! [ -f $card_back ]; then
-        printf '%s' "${argv0}: ${card_back} not found" 1>&2
+        printf '%s' "${progname}: ${card_back} not found" 1>&2
         exit 1
     fi
 
@@ -41,7 +41,7 @@ function generate_all() {
         if [ ${file##*.} = "front" ] || [ ${file##*.} = "back" ]; then
             printf '%s\n' "$(generate_card ${file})"
         else
-            printf '%s\n' "${argv0}: not processing ${file}" 1>&2
+            printf '%s\n' "${progname}: not processing ${file}" 1>&2
             continue
         fi
     done
