@@ -1,19 +1,15 @@
 #!/bin/sh
 
-help="Usage: ${0} <directory>"
+help="Usage: ${0} <file> ..."
 
-if [ $# -ne 1 ]; then
-    printf '%s\n' "${help}" 1>&2
-    exit 1
-elif ! [ -d "${1}" ]; then
-    printf '%s\n' "${help}" 1>&2
-    exit 1
-fi
+for file in $@; do
+    if ! [ -f $file ]; then
+        printf '%s\n' "${help}"
+        exit 1
+    fi
+done
 
-dir="${1}"
 argv0="${0}"
-
-cd "${dir}"
 
 header='#separator semicolon
 #html true
@@ -22,10 +18,11 @@ header='#separator semicolon
 '
 
 function generate_card() {
-    cards_dir=$1
-    card_id=$2
-    card_front="${cards_dir}/${card_id}.front"
-    card_back="${cards_dir}/${card_id}.back"
+    card_path="${1}"
+    file_name="${card_path##*/}"
+    card_id="${file_name%.*}"
+    card_front="${card_path%.*}.front"
+    card_back="${card_path%.*}.back"
 
     if ! [ -f $card_front ]; then
         printf '%s' "${argv0}: ${card_front} not found" 1>&2
@@ -43,11 +40,9 @@ function generate_card() {
 
 printf '%s' "${header}"
 
-for file in *; do
-    if [ ${file##*.} = "front" ]; then
-        printf '%s\n' "$(generate_card . ${file%.front})"
-    elif [ ${file##*.} = "back" ]; then
-        continue
+for file in $@; do
+    if [ ${file##*.} = "front" ] || [ ${file##*.} = "back" ]; then
+        printf '%s\n' "$(generate_card ${file})"
     else
         printf '%s\n' "${argv0}: not processing ${file}" 1>&2
         continue
