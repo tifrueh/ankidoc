@@ -21,10 +21,10 @@ function generate_card() {
     card_back="${card_path%.*}.back"
 
     if ! [ -f $card_front ]; then
-        printf '%s' "${progname}: ${card_front} not found" 1>&2
+        printf '%s\n' "${progname}: ${card_front} not found" 1>&2
         exit 1
     elif ! [ -f $card_back ]; then
-        printf '%s' "${progname}: ${card_back} not found" 1>&2
+        printf '%s\n' "${progname}: ${card_back} not found" 1>&2
         exit 1
     fi
 
@@ -62,10 +62,10 @@ function asciigen() {
     card_back="${card_path%.*}.back"
 
     if ! [ -f $card_front ]; then
-        printf '%s' "${progname}: ${card_front} not found" 1>&2
+        printf '%s\n' "${progname}: ${card_front} not found" 1>&2
         exit 1
     elif ! [ -f $card_back ]; then
-        printf '%s' "${progname}: ${card_back} not found" 1>&2
+        printf '%s\n' "${progname}: ${card_back} not found" 1>&2
         exit 1
     fi
 
