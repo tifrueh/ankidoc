@@ -1,0 +1,2 @@
+= ankidoc
+Timo Früh <dev@tifrueh.ch>
