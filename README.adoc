@@ -1,2 +1,106 @@
 = ankidoc
 Timo Früh <dev@tifrueh.ch>
+
+`ankidoc` is a short shell script intended to make writing
+https://apps.ankiweb.net[anki] notes in asciidoc easier.
+
+== Synopsis
+
+[source,plaintext]
+----
+ankidoc.sh [ qls | asciigen ] <files> ...
+----
+
+== Description
+
+The script can be used to generate a text file for import into anki from notes
+written in asciidoc. It also has additional functionality accessed via the
+`qls` and `asciigen` subcommands, but more on those later.
+
+The asciidoc notes need to be in a specific format in order for the script to
+be able to work with them; The idea is that each note — or at least each of the
+notes the user wants to have in one deck — is assigned a unique ID. It is then
+split into two asciidoc files, one with the content of the front side of the
+note, and one of the back side. These two files must now be saved as `ID.front`
+and `ID.back`, ID being the unique note ID that was assigned to the note.
+
+If, for example, two notes, `NoteOne` and `NoteTwo` were to be created, four
+files would be needed for that:
+
+[source,plaintext]
+----
+NoteOne.back
+NoteOne.front
+NoteTwo.back
+NoteTwo.front
+----
+
+Now, the list of `.front` files desired to be in the final import file can be
+passed to `ankidoc`. The script will first print an appropriate (but static)
+header for the anki import file to `stdout` and will then iterate through the
+list of files passed to it. During each iteration, it will try to find a
+corresponding `.back` file for every `.front` file. If such a file exists,
+`ankidoc` will convert both sides to HTML and output a properly formatted note
+entry to `stdout`.
+
+Any errors will be printed to `stderr`, so the output of the script can be
+redirected to a file, which can then be imported to anki.
+
+=== Anki Import File Format
+
+When importing a file generated with `ankidoc` into anki, the following points
+should be considered
+
+1. `ankidoc` separates note fields with a semicolon (`;`).
+2. `ankidoc` creates all notes with *three* fields: the previously note ID, the
+   front side and the back side. It is recommended to use a note type with
+   three fields in the import, so that the note ID can be used to avoid
+   duplicates and update already present notes instead.
+
+== Options
+
+`qls`::
+If this subcommand is specified, `ankidoc` will — instead of building an anki
+import file — list the filenames of all notes passed, followed by the contents
+of the front side of the card.
+
+`asciigen`::
+If this subcommand is specified, `ankidoc` will — instead of building an anki
+import file — concatenate all notes cards passed into a single asciidoc
+document.
+
+== Examples
+
+Create a anki import file `this_dir.txt` from all notes in this directory:
+
+[source,console]
+----
+$ ankidoc.sh *.front > this_dir.txt
+----
+
+Search for a note with "foo" on its front side among all notes in the current
+directory:
+
+[source,console]
+----
+$ ankidoc.sh qls *.front | grep -i 'foo'
+2024-09-10-N01.front : == What in the name of bar is foo?
+2024-10-02-N03.front : == Does foo bar a baz?
+----
+
+Generate `foo.html`, containing all notes in the current directory, the IDs of
+which match `2024-10-02-N0*`:
+
+[source,console]
+----
+$ ankidoc.sh asciigen 2024-10-02-N0*.front | asciidoctor -o foo.html -
+----
+
+== Dependencies
+
+* https://docs.asciidoctor.org/asciidoctor/latest/[asciidoctor]
+
+== On Anki Card Styles
+
+This repository also contains a "stylesheets" directory, in which you'll useful
+stylesheets for anki cards.
