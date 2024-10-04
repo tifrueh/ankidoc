@@ -39,8 +39,10 @@ function generate_all() {
     printf '%s' "${header}"
 
     for file in $@; do
-        if [ ${file##*.} = "front" ] || [ ${file##*.} = "back" ]; then
+        if [ ${file##*.} = "front" ]; then
             printf '%s\n' "$(generate_card ${file})"
+        elif [ ${file##*.} = "back" ]; then
+            continue
         else
             printf '%s\n' "${progname}: not processing ${file}" 1>&2
             continue
@@ -74,8 +76,10 @@ function asciigen() {
 
 function asciigen_all() {
     for file in $@; do
-        if [ ${file##*.} = "front" ] || [ ${file##*.} = "back" ]; then
+        if [ ${file##*.} = "front" ]; then
             printf '%s\n' "$(asciigen ${file})"
+        elif [ ${file##*.} = "back" ]; then
+            continue
         else
             printf '%s\n' "${progname}: not processing ${file}" 1>&2
             continue
