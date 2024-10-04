@@ -99,8 +99,3 @@ $ ankidoc.sh asciigen 2024-10-02-N0*.front | asciidoctor -o foo.html -
 == Dependencies
 
 * https://docs.asciidoctor.org/asciidoctor/latest/[asciidoctor]
-
-== On Anki Card Styles
-
-This repository also contains a "stylesheets" directory, in which you'll useful
-stylesheets for anki cards.
