@@ -71,7 +71,7 @@ function asciigen() {
         exit 1
     fi
 
-    printf '\n%s\n\n%s\n' "$(cat ${card_front})" "$(cat ${card_back})"
+    printf '\n%s\n\n_%s_\n\n%s\n' "$(cat ${card_front})" "${card_path%.*}" "$(cat ${card_back})"
 }
 
 function asciigen_all() {
