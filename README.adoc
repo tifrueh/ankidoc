@@ -1,6 +1,10 @@
 = ankidoc
 Timo Früh <dev@tifrueh.ch>
 
+*ATTENTION: This README is out of date. It describes the old ankidoc shell
+script. The README will be updated in the near future, but if you just want to
+use the old process described here, use commit b3ee942 or earlier.*
+
 `ankidoc` is a short shell script intended to make writing
 https://apps.ankiweb.net[anki] notes in asciidoc easier.
 
