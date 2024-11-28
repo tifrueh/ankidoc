@@ -1,113 +1,238 @@
-#!/bin/sh
+#!/usr/bin/env python3
 
-qlist=0
-asciigen=0
+import argparse
+import logging
+import subprocess
+import os
+import sys
 
-progname="${0##*/}"
+anki_header = """#separator:semicolon
+#html:true
+#columns:id;question;answer
 
-help="Usage: ${progname} [ qls | asciigen ] <file> ..."
+"""
 
-header='#separator semicolon
-#html true
-#columns id;question;answer
+# Pass a stderr output of a subprocess to the logging system.
+def pass_stderr(stderr):
 
-'
+    if stderr == None or stderr == b'':
+        return
 
-function generate_card() {
-    card_path="${1}"
-    file_name="${card_path##*/}"
-    card_id="${file_name%.*}"
-    card_front="${card_path%.*}.front"
-    card_back="${card_path%.*}.back"
+    stderr_string = stderr.decode("utf-8")
+    stderr_lines = stderr_string.splitlines()
 
-    if ! [ -f $card_front ]; then
-        printf '%s\n' "${progname}: ${card_front} not found" 1>&2
-        exit 1
-    elif ! [ -f $card_back ]; then
-        printf '%s\n' "${progname}: ${card_back} not found" 1>&2
-        exit 1
-    fi
+    for line in stderr_lines:
+        logging.warning(line)
 
-    front_html="$(asciidoctor -e -o - ${card_front} | sed -e 's/"/""/g')"
-    back_html="$(asciidoctor -e -o - ${card_back} | sed -e 's/"/""/g')"
+# Generate a note from a front file.
+def notegen(front_path):
+    logging.info(f"running notegen on {front_path}")
 
-    printf '"%s";"%s";"%s"' "${card_id}" "${front_html}" "${back_html}"
-}
+    id_path, ext = os.path.splitext(front_path)
 
-function generate_all() {
+    if ext != ".front":
+        logging.warning(f"{front_path} is not a front file, skipping")
+        return None
 
-    printf '%s' "${header}"
+    id = os.path.basename(id_path)
+    back_path = id_path + ".back"
+    note_path = id + ".note"
 
-    for file in $@; do
-        if [ ${file##*.} = "front" ]; then
-            printf '%s\n' "$(generate_card ${file})"
-        elif [ ${file##*.} = "back" ]; then
+    front = subprocess.run(["asciidoctor", "-e", "-o", "-", front_path], capture_output=True)
+    pass_stderr(front.stderr)
+
+    back = subprocess.run(["asciidoctor", "-e", "-o", "-", back_path], capture_output=True)
+    pass_stderr(back.stderr)
+
+    if front.stdout == None or front.stdout == b'' or back.stdout == None or back.stdout == b'':
+        return None
+
+    front_contents = front.stdout.decode("utf-8").replace("\"", "\"\"")
+    back_contents = back.stdout.decode("utf-8").replace("\"", "\"\"")
+
+    with open(note_path, "w") as note_file:
+        note_file.write(f"\"{id}\";\"{front_contents}\";\"{back_contents}\"\n")
+        return note_path
+
+# Link notes into one output file.
+def link(note_paths, output_path):
+    logging.info("running linker")
+    logging.debug(f"notes to link: {note_paths}")
+
+    output_contents = anki_header
+
+    for note_path in note_paths:
+
+        if not os.path.exists(note_path):
+            logging.warning(f"{note_path} doesn't exist, not linked")
             continue
-        else
-            printf '%s\n' "${progname}: not processing ${file}" 1>&2
+        elif not os.path.splitext(note_path)[1] == ".note":
+            logging.warning(f"{note_path} not a note file, not linked")
             continue
-        fi
-    done
-}
 
-function qlist() {
-    for file in $@; do
-        if [ ${file##*.} = "front" ]; then
-            printf '%s : %s\n' "${file}" "$(cat ${file})"
-        fi
-    done
-}
+        logging.info(f"linking on {note_path}")
 
-function asciigen() {
-    card_path="${1}"
-    card_front="${card_path%.*}.front"
-    card_back="${card_path%.*}.back"
+        with open(note_path, "r") as note_file:
+            output_contents += note_file.read()
 
-    if ! [ -f $card_front ]; then
-        printf '%s\n' "${progname}: ${card_front} not found" 1>&2
-        exit 1
-    elif ! [ -f $card_back ]; then
-        printf '%s\n' "${progname}: ${card_back} not found" 1>&2
-        exit 1
-    fi
+    with open(output_path, "w") as output:
+        output.write(output_contents)
 
-    printf '\n%s\n\n_%s_\n\n%s\n' "$(cat ${card_front})" "${card_path%.*}" "$(cat ${card_back})"
-}
+# Run the program in default mode on 'front_paths'.
+def default_mode(front_paths, output_path):
 
-function asciigen_all() {
-    for file in $@; do
-        if [ ${file##*.} = "front" ]; then
-            printf '%s\n' "$(asciigen ${file})"
-        elif [ ${file##*.} = "back" ]; then
+    logging.debug(f"operating on {front_paths}")
+
+    note_paths = []
+
+    for front_path in front_paths:
+
+        note_path = notegen(front_path)
+
+        if note_path != None:
+            note_paths.append(note_path)
+
+    link(note_paths, output_path)
+
+# Run the program in asciigen mode on 'front_paths'.
+def asciigen_mode(front_paths, output_path):
+
+    logging.debug(f"operating on {front_paths}")
+
+    asciidoc_output = ""
+
+    for front_path in front_paths:
+
+        id_path, ext = os.path.splitext(front_path)
+
+        if ext != ".front":
+            logging.warning(f"{front_path} is not a front file, skipping")
             continue
-        else
-            printf '%s\n' "${progname}: not processing ${file}" 1>&2
+
+        id = os.path.basename(id_path)
+        back_path = id_path + ".back"
+
+        if not os.path.isfile(front_path):
+            logging.warning(f"{front_path} is not a file, skipping")
             continue
-        fi
-    done
-}
+        elif not os.path.isfile(back_path):
+            logging.warning(f"{back_path} is not a file, skipping")
+            continue
 
-if [ "${1}" = "qls" ]; then
-    qlist=1
-    shift
-fi
+        front_contents = ""
+        back_contents = ""
 
-if [ "${1}" = "asciigen" ]; then
-    asciigen=1
-    shift
-fi
+        with open(front_path, "r") as front_file:
+            front_contents = front_file.read()
 
-for file in $@; do
-    if ! [ -f $file ]; then
-        printf '%s\n' "${help}"
-        exit 1
-    fi
-done
+        with open(back_path, "r") as back_file:
+            back_contents = back_file.read()
 
-if [ $qlist -eq 1 ]; then
-    qlist $@
-elif [ $asciigen -eq 1 ]; then
-    asciigen_all $@
-else
-    generate_all $@
-fi
+        asciidoc_output += f"\n{front_contents}\n\n_{id}_\n\n{back_contents}\n"
+
+    asciidoc_bytes = asciidoc_output.encode("utf-8")
+
+    asciidoctor = subprocess.run(["asciidoctor", "-o", output_path, "-"], input=asciidoc_bytes, capture_output=True)
+    pass_stderr(asciidoctor.stderr)
+
+# Run the program in notegen mode on 'front_paths'.
+def notegen_mode(front_paths):
+
+    logging.debug(f"operating on {front_paths}")
+
+    for front_path in front_paths:
+
+        notegen(front_path)
+
+# Run the program in link mode on 'front_paths'.
+def link_mode(front_paths, output_path):
+
+    logging.debug(f"operating on {front_paths}")
+
+    link(front_paths, output_path)
+
+def main():
+
+    # Initialise the argument parser and all arguments.
+    parser = argparse.ArgumentParser(description="convert asciidoc notes to anki notes")
+
+    parser.add_argument(
+        "-a", "--asciigen",
+        action="store_true",
+        help="concatenate the front/back files passed into one asciidoc document"
+    )
+
+    parser.add_argument(
+        "-n", "--notegen",
+        action="store_true",
+        help="compile the front/back files passed into note files"
+    )
+
+    parser.add_argument(
+        "-l", "--link",
+        action="store_true",
+        help="link the note files passed into one anki import file"
+    )
+
+    parser.add_argument(
+        "-o", "--output",
+        default="out",
+        metavar="OUT",
+        help="the desired output filename (does not apply in notegen mode)"
+    )
+
+    parser.add_argument(
+        "-g", "--loglevel",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        default="WARNING",
+        metavar="LV",
+        help="select a logging level"
+    )
+
+    parser.add_argument(
+        "files",
+        nargs="*",
+        help="the files to operate on"
+    )
+
+    args = parser.parse_args()
+
+    # Configure the logging mechanism.
+    loglevel = logging.WARNING
+
+    if args.loglevel == "DEBUG":
+        loglevel = logging.DEBUG
+    elif args.loglevel == "INFO":
+        loglevel = logging.INFO
+    elif args.loglevel == "WARNING":
+        loglevel = logging.WARNING
+    elif args.loglevel == "ERROR":
+        loglevel = logging.ERROR
+    elif args.loglevel == "CRITICAL":
+        loglevel = logging.CRITICAL
+
+    logging.basicConfig(format=f"{parser.prog}: %(levelname)s: %(message)s", level=loglevel)
+
+    # Rule out common errors.
+    if (args.asciigen and args.notegen) or (args.asciigen and args.link) or (args.notegen and args.link):
+        logging.critical("incompatible modes")
+        exit(1)
+
+    if args.files == []:
+        logging.critical("no files provided")
+        exit(1)
+
+    # Run the program in the mode requested by the user.
+    if args.asciigen:
+        asciigen_mode(args.files, args.output)
+    elif args.notegen:
+        notegen_mode(args.files)
+    elif args.link:
+        link_mode(args.files, args.output)
+    else:
+        default_mode(args.files, args.output)
+
+    exit(0)
+
+if __name__ == "__main__":
+    main()
