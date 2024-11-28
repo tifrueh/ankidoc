@@ -25,7 +25,7 @@ def pass_stderr(stderr):
         logging.warning(line)
 
 # Generate a note from a front file.
-def notegen(front_path):
+def notegen(front_path, build_directory):
     logging.info(f"running notegen on {front_path}")
 
     id_path, ext = os.path.splitext(front_path)
@@ -34,9 +34,13 @@ def notegen(front_path):
         logging.warning(f"{front_path} is not a front file, skipping")
         return None
 
+    if not os.path.isdir(build_directory):
+        logging.warning(f"{directory} is not a directory")
+        return None
+
     id = os.path.basename(id_path)
     back_path = id_path + ".back"
-    note_path = id + ".note"
+    note_path = build_directory + "/" + id + ".note"
 
     front = subprocess.run(["asciidoctor", "-e", "-o", "-", front_path], capture_output=True)
     pass_stderr(front.stderr)
@@ -79,7 +83,7 @@ def link(note_paths, output_path):
         output.write(output_contents)
 
 # Run the program in default mode on 'front_paths'.
-def default_mode(front_paths, output_path):
+def default_mode(front_paths, output_path, build_directory):
 
     logging.debug(f"operating on {front_paths}")
 
@@ -87,7 +91,7 @@ def default_mode(front_paths, output_path):
 
     for front_path in front_paths:
 
-        note_path = notegen(front_path)
+        note_path = notegen(front_path, build_directory)
 
         if note_path != None:
             note_paths.append(note_path)
@@ -136,13 +140,13 @@ def asciigen_mode(front_paths, output_path):
     pass_stderr(asciidoctor.stderr)
 
 # Run the program in notegen mode on 'front_paths'.
-def notegen_mode(front_paths):
+def notegen_mode(front_paths, build_directory):
 
     logging.debug(f"operating on {front_paths}")
 
     for front_path in front_paths:
 
-        notegen(front_path)
+        notegen(front_path, build_directory)
 
 # Run the program in link mode on 'front_paths'.
 def link_mode(front_paths, output_path):
@@ -179,6 +183,13 @@ def main():
         default="out",
         metavar="OUT",
         help="the desired output filename (does not apply in notegen mode)"
+    )
+
+    parser.add_argument(
+        "-d", "--dir",
+        default=".",
+        metavar="DIR",
+        help="generate note files in DIR"
     )
 
     parser.add_argument(
@@ -226,11 +237,11 @@ def main():
     if args.asciigen:
         asciigen_mode(args.files, args.output)
     elif args.notegen:
-        notegen_mode(args.files)
+        notegen_mode(args.files, args.dir)
     elif args.link:
         link_mode(args.files, args.output)
     else:
-        default_mode(args.files, args.output)
+        default_mode(args.files, args.output, args.dir)
 
     exit(0)
 
