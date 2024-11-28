@@ -182,7 +182,7 @@ def main():
     )
 
     parser.add_argument(
-        "-g", "--loglevel",
+        "-L", "--loglevel",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         default="WARNING",
         metavar="LV",
