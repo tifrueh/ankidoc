@@ -74,7 +74,7 @@ def link(note_paths, output_path):
             logging.warning(f"{note_path} not a note file, not linked")
             continue
 
-        logging.info(f"linking on {note_path}")
+        logging.info(f"linking {note_path}")
 
         with open(note_path, "r") as note_file:
             output_contents += note_file.read()
