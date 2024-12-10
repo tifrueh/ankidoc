@@ -12,6 +12,19 @@ anki_header = """#separator:semicolon
 
 """
 
+# Construct a asciidoctor command.
+def get_adoc_cmd(embedded, input, output):
+    cmd = ["asciidoctor"]
+
+    if embedded:
+        cmd.append("-e")
+
+    cmd.append("-o")
+    cmd.append(output)
+    cmd.append(input)
+
+    return cmd
+
 # Pass a stderr output of a subprocess to the logging system.
 def pass_stderr(stderr):
 
@@ -42,10 +55,10 @@ def notegen(front_path, build_directory):
     back_path = id_path + ".back"
     note_path = build_directory + "/" + id + ".note"
 
-    front = subprocess.run(["asciidoctor", "-e", "-o", "-", front_path], capture_output=True)
+    front = subprocess.run(get_adoc_cmd(True, front_path, "-"), capture_output=True)
     pass_stderr(front.stderr)
 
-    back = subprocess.run(["asciidoctor", "-e", "-o", "-", back_path], capture_output=True)
+    back = subprocess.run(get_adoc_cmd(True, back_path, "-"), capture_output=True)
     pass_stderr(back.stderr)
 
     if front.stdout == None or front.stdout == b'' or back.stdout == None or back.stdout == b'':
@@ -136,7 +149,7 @@ def asciigen_mode(front_paths, output_path):
 
     asciidoc_bytes = asciidoc_output.encode("utf-8")
 
-    asciidoctor = subprocess.run(["asciidoctor", "-o", output_path, "-"], input=asciidoc_bytes, capture_output=True)
+    asciidoctor = subprocess.run(get_adoc_cmd(False, "-", output_path), input=asciidoc_bytes, capture_output=True)
     pass_stderr(asciidoctor.stderr)
 
 # Run the program in notegen mode on 'front_paths'.
