@@ -23,6 +23,8 @@ def get_adoc_cmd(embedded, input, output):
     cmd.append(output)
     cmd.append(input)
 
+    logging.debug(f"constructed command \"{cmd}\"");
+
     return cmd
 
 # Pass a stderr output of a subprocess to the logging system.
