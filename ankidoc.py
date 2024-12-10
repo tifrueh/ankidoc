@@ -178,7 +178,7 @@ def main():
     parser.add_argument(
         "-a", "--asciigen",
         action="store_true",
-        help="concatenate the front/back files passed into one asciidoc document"
+        help="generate a single html document from the front files passed"
     )
 
     parser.add_argument(
