@@ -179,7 +179,10 @@ def link_mode(front_paths, output_path):
 def main():
 
     # Initialise the argument parser and all arguments.
-    parser = argparse.ArgumentParser(description="convert asciidoc notes to anki notes")
+    parser = argparse.ArgumentParser(
+        description="convert asciidoc notes to anki notes",
+        usage="%(prog)s [-h] [ -d | -n | -l ] [-o OUT] [-a ATTR] [-L LV] files ..."
+    )
 
     parser.add_argument(
         "-d", "--docgen",
