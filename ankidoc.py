@@ -38,7 +38,7 @@ def pass_stderr(stderr):
         logging.warning(line)
 
 # Generate a note from a front file.
-def notegen(front_path, build_directory):
+def notegen(front_path):
     logging.info(f"running notegen on {front_path}")
 
     id_path, ext = os.path.splitext(front_path)
@@ -47,13 +47,8 @@ def notegen(front_path, build_directory):
         logging.warning(f"{front_path} is not a front file, skipping")
         return None
 
-    if not os.path.isdir(build_directory):
-        logging.warning(f"{directory} is not a directory")
-        return None
-
     id = os.path.basename(id_path)
     back_path = id_path + ".back"
-    note_path = build_directory + "/" + id + ".note"
 
     front = subprocess.run(get_adoc_cmd(True, front_path, "-"), capture_output=True)
     pass_stderr(front.stderr)
@@ -67,49 +62,48 @@ def notegen(front_path, build_directory):
     front_contents = front.stdout.decode("utf-8").replace("\"", "\"\"")
     back_contents = back.stdout.decode("utf-8").replace("\"", "\"\"")
 
-    with open(note_path, "w") as note_file:
-        note_file.write(f"\"{id}\";\"{front_contents}\";\"{back_contents}\"\n")
-        return note_path
+    return f"\"{id}\";\"{front_contents}\";\"{back_contents}\"\n"
 
 # Link notes into one output file.
 def link(note_paths, output_path):
     logging.info("running linker")
     logging.debug(f"notes to link: {note_paths}")
 
-    output_contents = anki_header
-
-    for note_path in note_paths:
-
-        if not os.path.exists(note_path):
-            logging.warning(f"{note_path} doesn't exist, not linked")
-            continue
-        elif not os.path.splitext(note_path)[1] == ".note":
-            logging.warning(f"{note_path} not a note file, not linked")
-            continue
-
-        logging.info(f"linking {note_path}")
-
-        with open(note_path, "r") as note_file:
-            output_contents += note_file.read()
-
     with open(output_path, "w") as output:
-        output.write(output_contents)
+        output.write(anki_header)
+
+    with open(output_path, "a") as output:
+
+        for note_path in note_paths:
+
+            if not os.path.exists(note_path):
+                logging.warning(f"{note_path} doesn't exist, not linked")
+                continue
+            elif not os.path.splitext(note_path)[1] == ".note":
+                logging.warning(f"{note_path} not a note file, not linked")
+                continue
+
+            logging.info(f"linking {note_path}")
+
+            with open(note_path, "r") as note_file:
+                output.write(note_file.read())
 
 # Run the program in default mode on 'front_paths'.
-def default_mode(front_paths, output_path, build_directory):
+def default_mode(front_paths, output_path):
 
     logging.debug(f"operating on {front_paths}")
 
-    note_paths = []
+    with open(output_path, "w") as output:
+        output.write(anki_header)
 
-    for front_path in front_paths:
+    with open(output_path, "a") as output:
 
-        note_path = notegen(front_path, build_directory)
+        for front_path in front_paths:
 
-        if note_path != None:
-            note_paths.append(note_path)
+            note = notegen(front_path)
 
-    link(note_paths, output_path)
+            if not note == None:
+                output.write(note)
 
 # Run the program in asciigen mode on 'front_paths'.
 def asciigen_mode(front_paths, output_path):
@@ -153,13 +147,21 @@ def asciigen_mode(front_paths, output_path):
     pass_stderr(asciidoctor.stderr)
 
 # Run the program in notegen mode on 'front_paths'.
-def notegen_mode(front_paths, build_directory):
+def notegen_mode(front_paths, output_path):
 
     logging.debug(f"operating on {front_paths}")
 
-    for front_path in front_paths:
+    if len(front_paths) > 1:
+        logging.critical("cannot run in notegen mode when generating multiple files")
+        exit(1)
 
-        notegen(front_path, build_directory)
+    note = notegen(front_paths[0])
+
+    if note == None:
+        return
+
+    with open(output_path, "w") as note_file:
+        note_file.write(note)
 
 # Run the program in link mode on 'front_paths'.
 def link_mode(front_paths, output_path):
@@ -195,14 +197,7 @@ def main():
         "-o", "--output",
         default="out",
         metavar="OUT",
-        help="the desired output filename (does not apply in notegen mode)"
-    )
-
-    parser.add_argument(
-        "-d", "--dir",
-        default=".",
-        metavar="DIR",
-        help="generate note files in DIR"
+        help="the desired output filename"
     )
 
     parser.add_argument(
@@ -250,11 +245,11 @@ def main():
     if args.asciigen:
         asciigen_mode(args.files, args.output)
     elif args.notegen:
-        notegen_mode(args.files, args.dir)
+        notegen_mode(args.files, args.output)
     elif args.link:
         link_mode(args.files, args.output)
     else:
-        default_mode(args.files, args.output, args.dir)
+        default_mode(args.files, args.output)
 
     exit(0)
 
