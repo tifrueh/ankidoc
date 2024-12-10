@@ -105,8 +105,8 @@ def default_mode(front_paths, output_path):
             if not note == None:
                 output.write(note)
 
-# Run the program in asciigen mode on 'front_paths'.
-def asciigen_mode(front_paths, output_path):
+# Run the program in docgen mode on 'front_paths'.
+def docgen_mode(front_paths, output_path):
 
     logging.debug(f"operating on {front_paths}")
 
@@ -176,7 +176,7 @@ def main():
     parser = argparse.ArgumentParser(description="convert asciidoc notes to anki notes")
 
     parser.add_argument(
-        "-a", "--asciigen",
+        "-d", "--docgen",
         action="store_true",
         help="generate a single html document from the front files passed"
     )
@@ -233,7 +233,7 @@ def main():
     logging.basicConfig(format=f"{parser.prog}: %(levelname)s: %(message)s", level=loglevel)
 
     # Rule out common errors.
-    if (args.asciigen and args.notegen) or (args.asciigen and args.link) or (args.notegen and args.link):
+    if (args.docgen and args.notegen) or (args.docgen and args.link) or (args.notegen and args.link):
         logging.critical("incompatible modes")
         exit(1)
 
@@ -242,8 +242,8 @@ def main():
         exit(1)
 
     # Run the program in the mode requested by the user.
-    if args.asciigen:
-        asciigen_mode(args.files, args.output)
+    if args.docgen:
+        docgen_mode(args.files, args.output)
     elif args.notegen:
         notegen_mode(args.files, args.output)
     elif args.link:
