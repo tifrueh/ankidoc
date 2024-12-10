@@ -13,11 +13,15 @@ anki_header = """#separator:semicolon
 """
 
 # Construct a asciidoctor command.
-def get_adoc_cmd(embedded, input, output):
+def get_adoc_cmd(embedded, attributes, input, output):
     cmd = ["asciidoctor"]
 
     if embedded:
         cmd.append("-e")
+
+    if attributes:
+        cmd.append("-a")
+        cmd.append(attributes)
 
     cmd.append("-o")
     cmd.append(output)
@@ -40,7 +44,7 @@ def pass_stderr(stderr):
         logging.warning(line)
 
 # Generate a note from a front file.
-def notegen(front_path):
+def notegen(front_path, attributes):
     logging.info(f"running notegen on {front_path}")
 
     id_path, ext = os.path.splitext(front_path)
@@ -52,10 +56,10 @@ def notegen(front_path):
     id = os.path.basename(id_path)
     back_path = id_path + ".back"
 
-    front = subprocess.run(get_adoc_cmd(True, front_path, "-"), capture_output=True)
+    front = subprocess.run(get_adoc_cmd(True, attributes, front_path, "-"), capture_output=True)
     pass_stderr(front.stderr)
 
-    back = subprocess.run(get_adoc_cmd(True, back_path, "-"), capture_output=True)
+    back = subprocess.run(get_adoc_cmd(True, attributes, back_path, "-"), capture_output=True)
     pass_stderr(back.stderr)
 
     if front.stdout == None or front.stdout == b'' or back.stdout == None or back.stdout == b'':
@@ -91,7 +95,7 @@ def link(note_paths, output_path):
                 output.write(note_file.read())
 
 # Run the program in default mode on 'front_paths'.
-def default_mode(front_paths, output_path):
+def default_mode(front_paths, output_path, attributes):
 
     logging.debug(f"operating on {front_paths}")
 
@@ -102,13 +106,13 @@ def default_mode(front_paths, output_path):
 
         for front_path in front_paths:
 
-            note = notegen(front_path)
+            note = notegen(front_path, attributes)
 
             if not note == None:
                 output.write(note)
 
 # Run the program in docgen mode on 'front_paths'.
-def docgen_mode(front_paths, output_path):
+def docgen_mode(front_paths, output_path, attributes):
 
     logging.debug(f"operating on {front_paths}")
 
@@ -145,11 +149,11 @@ def docgen_mode(front_paths, output_path):
 
     asciidoc_bytes = asciidoc_output.encode("utf-8")
 
-    asciidoctor = subprocess.run(get_adoc_cmd(False, "-", output_path), input=asciidoc_bytes, capture_output=True)
+    asciidoctor = subprocess.run(get_adoc_cmd(False, attributes, "-", output_path), input=asciidoc_bytes, capture_output=True)
     pass_stderr(asciidoctor.stderr)
 
 # Run the program in notegen mode on 'front_paths'.
-def notegen_mode(front_paths, output_path):
+def notegen_mode(front_paths, output_path, attributes):
 
     logging.debug(f"operating on {front_paths}")
 
@@ -157,7 +161,7 @@ def notegen_mode(front_paths, output_path):
         logging.critical("cannot run in notegen mode when generating multiple files")
         exit(1)
 
-    note = notegen(front_paths[0])
+    note = notegen(front_paths[0], attributes)
 
     if note == None:
         return
@@ -203,6 +207,12 @@ def main():
     )
 
     parser.add_argument(
+        "-a", "--attributes",
+        metavar="ATTR",
+        help="any asciidoctor attributes to set"
+    )
+
+    parser.add_argument(
         "-L", "--loglevel",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         default="WARNING",
@@ -245,13 +255,13 @@ def main():
 
     # Run the program in the mode requested by the user.
     if args.docgen:
-        docgen_mode(args.files, args.output)
+        docgen_mode(args.files, args.output, args.attributes)
     elif args.notegen:
-        notegen_mode(args.files, args.output)
+        notegen_mode(args.files, args.output, args.attributes)
     elif args.link:
         link_mode(args.files, args.output)
     else:
-        default_mode(args.files, args.output)
+        default_mode(args.files, args.output, args.attributes)
 
     exit(0)
 
