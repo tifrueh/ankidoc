@@ -185,15 +185,15 @@ def main():
     )
 
     parser.add_argument(
-        "-d", "--docgen",
-        action="store_true",
-        help="generate a single html document from the front files passed"
+        "-a", "--attributes",
+        metavar="ATTR",
+        help="any asciidoctor attributes to set"
     )
 
     parser.add_argument(
-        "-n", "--notegen",
+        "-d", "--docgen",
         action="store_true",
-        help="compile the front/back files passed into note files"
+        help="generate a single html document from the front files passed"
     )
 
     parser.add_argument(
@@ -203,24 +203,24 @@ def main():
     )
 
     parser.add_argument(
-        "-o", "--output",
-        default="out",
-        metavar="OUT",
-        help="the desired output filename"
-    )
-
-    parser.add_argument(
-        "-a", "--attributes",
-        metavar="ATTR",
-        help="any asciidoctor attributes to set"
-    )
-
-    parser.add_argument(
         "-L", "--loglevel",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         default="WARNING",
         metavar="LV",
         help="select a logging level"
+    )
+
+    parser.add_argument(
+        "-n", "--notegen",
+        action="store_true",
+        help="compile the front/back files passed into note files"
+    )
+
+    parser.add_argument(
+        "-o", "--output",
+        default="out",
+        metavar="OUT",
+        help="the desired output filename"
     )
 
     parser.add_argument(
