@@ -1,0 +1,102 @@
+import argparse
+import logging
+
+from ankidoc.modes import default_mode
+from ankidoc.modes import notegen_mode
+from ankidoc.modes import link_mode
+from ankidoc.modes import docgen_mode
+
+def main():
+
+    # Initialise the argument parser and all arguments.
+    parser = argparse.ArgumentParser(
+        description="convert asciidoc notes to anki notes",
+        usage="%(prog)s [-h] [ -d | -n | -l ] [-o OUT] [-a ATTR] [-L LV] files ..."
+    )
+
+    parser.add_argument(
+        "-a", "--attributes",
+        metavar="ATTR",
+        help="any asciidoctor attributes to set"
+    )
+
+    parser.add_argument(
+        "-d", "--docgen",
+        action="store_true",
+        help="generate a single html document from the front files passed"
+    )
+
+    parser.add_argument(
+        "-l", "--link",
+        action="store_true",
+        help="link the note files passed into one anki import file"
+    )
+
+    parser.add_argument(
+        "-L", "--loglevel",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        default="WARNING",
+        metavar="LV",
+        help="select a logging level"
+    )
+
+    parser.add_argument(
+        "-n", "--notegen",
+        action="store_true",
+        help="compile the front/back files passed into note files"
+    )
+
+    parser.add_argument(
+        "-o", "--output",
+        default="out",
+        metavar="OUT",
+        help="the desired output filename"
+    )
+
+    parser.add_argument(
+        "files",
+        nargs="*",
+        help="the files to operate on"
+    )
+
+    args = parser.parse_args()
+
+    # Configure the logging mechanism.
+    loglevel = logging.WARNING
+
+    if args.loglevel == "DEBUG":
+        loglevel = logging.DEBUG
+    elif args.loglevel == "INFO":
+        loglevel = logging.INFO
+    elif args.loglevel == "WARNING":
+        loglevel = logging.WARNING
+    elif args.loglevel == "ERROR":
+        loglevel = logging.ERROR
+    elif args.loglevel == "CRITICAL":
+        loglevel = logging.CRITICAL
+
+    logging.basicConfig(format=f"{parser.prog}: %(levelname)s: %(message)s", level=loglevel)
+
+    # Rule out common errors.
+    if (args.docgen and args.notegen) or (args.docgen and args.link) or (args.notegen and args.link):
+        logging.critical("incompatible modes")
+        exit(1)
+
+    if args.files == []:
+        logging.critical("no files provided")
+        exit(1)
+
+    # Run the program in the mode requested by the user.
+    if args.docgen:
+        docgen_mode(args.files, args.output, args.attributes)
+    elif args.notegen:
+        notegen_mode(args.files, args.output, args.attributes)
+    elif args.link:
+        link_mode(args.files, args.output)
+    else:
+        default_mode(args.files, args.output, args.attributes)
+
+    exit(0)
+
+if __name__ == "__main__":
+    main()
