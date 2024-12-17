@@ -22,7 +22,7 @@ def default_mode(front_paths, output_path, attributes):
 
     with open(output_path, "a") as output:
         for front_path in front_paths:
-            convert_note(front_path, output)
+            convert_note(front_path, output, attributes)
 
 # Run the program in notegen mode.
 def notegen_mode(front_paths, output_path, attributes):
