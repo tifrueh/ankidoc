@@ -1,0 +1,24 @@
+[build-system]
+requires = [ "setuptools >= 64", "setuptools-scm >= 8" ]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ankidoc"
+dynamic = [ "version" ]
+authors = [
+    { name = "Timo Früh", email = "dev@tifrueh.ch" }
+]
+description = "convert asciidoc notes to anki notes"
+readme = { file = "README.adoc", content-type = "text/adoc" }
+license = { file = "LICENSE.md" }
+
+[project.urls]
+Homepage = "https://github.com/tifrueh/ankidoc/"
+
+[project.scripts]
+ankidoc = "ankidoc.cli:main"
+
+[tool.setuptools.data-files]
+"share/man/man1" = [
+    "Documentation/ankidoc.1"
+]
