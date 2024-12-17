@@ -22,3 +22,5 @@ ankidoc = "ankidoc.cli:main"
 "share/man/man1" = [
     "Documentation/ankidoc.1"
 ]
+
+[tool.setuptools_scm]
