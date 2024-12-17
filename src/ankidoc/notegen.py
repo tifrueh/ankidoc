@@ -17,7 +17,7 @@ def notegen(front_path, attributes):
     back_path = id_path + ".back"
 
     front = file_to_str(front_path, True, attributes)
-    back = file_to_str(iback_path, True, attributes)
+    back = file_to_str(back_path, True, attributes)
 
     if front == None or back == None:
         return None
