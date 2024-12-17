@@ -1,4 +1,5 @@
 import logging
+import os
 
 from ankidoc.adoc import file_to_str
 
