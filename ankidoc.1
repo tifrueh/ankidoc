@@ -101,6 +101,13 @@ Run \fBankidoc\fP in notegen mode.
 .BI "\-o, \-\-output " OUT
 Specify the desired output filename.
 .
+.TP
+.I files
+Specify the files to operate on. Note that these generally have to be
+\fI.front\fP files with existing corresponding \fI.back\fP files in oder for
+\fBankidoc\fP to work. This is except when operating in link mode, in which
+case this option has to be one single \fI.note\fP file.
+.
 .SH EXIT STATUS
 .
 .TP
