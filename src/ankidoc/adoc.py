@@ -3,7 +3,7 @@ import subprocess
 
 _anki_header = """#separator:semicolon
 #html:true
-#columns:id;question;answer
+#columns:id;front;back
 
 """
 
