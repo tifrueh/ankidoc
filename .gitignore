@@ -173,3 +173,4 @@ cython_debug/
 # === END PYTHON TEMPLATE ======================================================
 
 .DS_Store
+.python-version
