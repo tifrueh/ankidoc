@@ -1,12 +1,6 @@
 import logging
 import subprocess
 
-_anki_header = """#separator:semicolon
-#html:true
-#columns:id;front;back
-
-"""
-
 # Pass a stderr output of a subprocess to the logging system.
 def pass_stderr(stderr):
 

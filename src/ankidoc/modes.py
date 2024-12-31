@@ -1,7 +1,7 @@
 import logging
 import os
 
-from ankidoc.adoc import _anki_header
+from ankidoc.anki import get_anki_header
 from ankidoc.adoc import str_to_file
 from ankidoc.notegen import notegen
 
@@ -13,12 +13,12 @@ def convert_note(front_path, output, attributes):
         output.write(note)
 
 # Run the program in default mode.
-def default_mode(front_paths, output_path, attributes):
+def default_mode(front_paths, output_path, attributes, notetype, deck):
 
     logging.debug(f"operating in default mode on {front_paths}")
 
     with open(output_path, "w") as output:
-        output.write(_anki_header)
+        output.write(get_anki_header(notetype, deck))
 
     with open(output_path, "a") as output:
         for front_path in front_paths:
@@ -57,12 +57,12 @@ def link_note(note_path, output):
         output.write(note_file.read())
 
 # Link notes into one output file.
-def link_mode(note_paths, output_path):
+def link_mode(note_paths, output_path, notetype, deck):
     logging.info("running linker")
     logging.debug(f"notes to link: {note_paths}")
 
     with open(output_path, "w") as output:
-        output.write(_anki_header)
+        output.write(get_anki_header(notetype, deck))
 
     with open(output_path, "a") as output:
         for note_path in note_paths:

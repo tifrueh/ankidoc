@@ -28,6 +28,11 @@ def main():
     )
 
     parser.add_argument(
+        "-D", "--deck",
+        help="preset an anki deck for the import"
+    )
+
+    parser.add_argument(
         "-l", "--link",
         action="store_true",
         help="link the note files passed into one anki import file"
@@ -45,6 +50,13 @@ def main():
         "-n", "--notegen",
         action="store_true",
         help="compile the front/back files passed into note files"
+    )
+
+    parser.add_argument(
+        "-N", "--notetype",
+        default="Ankidoc",
+        metavar="TYPE",
+        help="preset a note type for the import"
     )
 
     parser.add_argument(
@@ -103,9 +115,9 @@ def main():
     elif args.notegen:
         notegen_mode(args.files, args.output, args.attributes)
     elif args.link:
-        link_mode(args.files, args.output)
+        link_mode(args.files, args.output, args.notetype, args.deck)
     else:
-        default_mode(args.files, args.output, args.attributes)
+        default_mode(args.files, args.output, args.attributes, args.notetype, args.deck)
 
     exit(0)
 
