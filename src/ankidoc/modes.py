@@ -15,6 +15,9 @@ def convert_note(front_path, output, attributes):
 # Run the program in default mode.
 def default_mode(front_paths, output_path, attributes, notetype, deck):
 
+    if output_path == None:
+        output_path = "out.txt"
+
     logging.debug(f"operating in default mode on {front_paths}")
 
     with open(output_path, "w") as output:
@@ -26,6 +29,9 @@ def default_mode(front_paths, output_path, attributes, notetype, deck):
 
 # Run the program in notegen mode.
 def notegen_mode(front_paths, output_path, attributes):
+
+    if output_path == None:
+        output_path = "out.note"
 
     logging.debug(f"operating in notegen_mode on {front_paths}")
 
@@ -61,6 +67,9 @@ def link_mode(note_paths, output_path, notetype, deck):
     logging.info("running linker")
     logging.debug(f"notes to link: {note_paths}")
 
+    if output_path == None:
+        output_path == "out.txt"
+
     with open(output_path, "w") as output:
         output.write(get_anki_header(notetype, deck))
 
@@ -70,6 +79,9 @@ def link_mode(note_paths, output_path, notetype, deck):
 
 # Run the program in docgen mode.
 def docgen_mode(front_paths, output_path, attributes):
+
+    if output_path == None:
+        output_path == "out.html"
 
     logging.debug(f"operating in docgen mode on {front_paths}")
 

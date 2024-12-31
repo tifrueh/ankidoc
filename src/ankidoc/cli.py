@@ -61,7 +61,6 @@ def main():
 
     parser.add_argument(
         "-o", "--output",
-        default="out",
         metavar="OUT",
         help="the desired output filename"
     )
