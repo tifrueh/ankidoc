@@ -12,7 +12,7 @@ def main():
     # Initialise the argument parser and all arguments.
     parser = argparse.ArgumentParser(
         description="convert asciidoc notes to anki notes",
-        usage="%(prog)s [-h] [-v] [ -d | -n | -l ] [-o OUT] [-a ATTR] [-L LV] files ..."
+        usage="%(prog)s [ -d | -n | -l ] files ..."
     )
 
     parser.add_argument(
