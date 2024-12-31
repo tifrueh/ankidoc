@@ -68,7 +68,7 @@ def link_mode(note_paths, output_path, notetype, deck):
     logging.debug(f"notes to link: {note_paths}")
 
     if output_path == None:
-        output_path == "out.txt"
+        output_path = "out.txt"
 
     with open(output_path, "w") as output:
         output.write(get_anki_header(notetype, deck))
@@ -81,7 +81,7 @@ def link_mode(note_paths, output_path, notetype, deck):
 def docgen_mode(front_paths, output_path, attributes):
 
     if output_path == None:
-        output_path == "out.html"
+        output_path = "out.html"
 
     logging.debug(f"operating in docgen mode on {front_paths}")
 
