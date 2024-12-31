@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ankidoc"
-version = "0.0.1+dev"
+dynamic = [ "version" ]
 authors = [
     { name = "Timo Früh", email = "dev@tifrueh.ch" }
 ]
@@ -22,3 +22,6 @@ ankidoc = "ankidoc.cli:main"
 "share/man/man1" = [
     "Documentation/ankidoc.1"
 ]
+
+[tool.setuptools.dynamic]
+version = { attr = "ankidoc.__version__" }

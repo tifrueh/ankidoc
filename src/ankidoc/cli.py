@@ -5,13 +5,14 @@ from ankidoc.modes import default_mode
 from ankidoc.modes import notegen_mode
 from ankidoc.modes import link_mode
 from ankidoc.modes import docgen_mode
+from ankidoc import __version__
 
 def main():
 
     # Initialise the argument parser and all arguments.
     parser = argparse.ArgumentParser(
         description="convert asciidoc notes to anki notes",
-        usage="%(prog)s [-h] [ -d | -n | -l ] [-o OUT] [-a ATTR] [-L LV] files ..."
+        usage="%(prog)s [-h] [-v] [ -d | -n | -l ] [-o OUT] [-a ATTR] [-L LV] files ..."
     )
 
     parser.add_argument(
@@ -54,6 +55,12 @@ def main():
     )
 
     parser.add_argument(
+        "-v", "--version",
+        action="store_true",
+        help="display version information"
+    )
+
+    parser.add_argument(
         "files",
         nargs="*",
         help="the files to operate on"
@@ -76,6 +83,10 @@ def main():
         loglevel = logging.CRITICAL
 
     logging.basicConfig(format=f"{parser.prog}: %(levelname)s: %(message)s", level=loglevel)
+
+    if args.version:
+        print(__version__)
+        exit(0)
 
     # Rule out common errors.
     if (args.docgen and args.notegen) or (args.docgen and args.link) or (args.notegen and args.link):
