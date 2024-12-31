@@ -16,12 +16,16 @@ ankidoc \- convert asciidoc notes to anki notes
 .
 .SY ankidoc
 .RB "[ " \-d " | " \-l " | " \-n " ]"
-.RB [ \-o
-.IR OUT ]
 .RB [ \-a
 .IR ATTR ]
+.RB [ \-D
+.IR DECK ]
 .RB [ \-L
 .IR LV ]
+.RB [ \-N
+.IR TYPE ]
+.RB [ \-o
+.IR OUT ]
 .I files
 .
 .SH DESCRIPTION
@@ -89,6 +93,10 @@ command.
 Run \fBankidoc\fP in docgen mode.
 .
 .TP
+.BI "\-D, \-\-deck " DECK
+Specify a deck name, which will be set as default deck in the import file.
+.
+.TP
 .B \-l, \-\-link
 Run \fBankidoc\fP in link mode.
 .
@@ -100,6 +108,10 @@ Select a logging level from \(dqDEBUG\(dq, \(dqINFO\(dq, \(dqWARNING\(dq,
 .TP
 .B \-n, \-\-notegen
 Run \fBankidoc\fP in notegen mode.
+.
+.TP
+.BI "\-N, \-\-notetype " TYPE
+Specify a note type, which will be set as default note type in the import file.
 .
 .TP
 .BI "\-o, \-\-output " OUT
