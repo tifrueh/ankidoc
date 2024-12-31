@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ankidoc"
-version = "0.0.1"
+version = "0.0.1+dev"
 authors = [
     { name = "Timo Früh", email = "dev@tifrueh.ch" }
 ]
