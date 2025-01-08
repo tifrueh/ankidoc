@@ -1,3 +1,6 @@
+# Copyright (C) 2024-2025 Timo Früh
+# See __main__.py for the full notice.
+
 # Construct an anki import file header.
 def get_anki_header(notetype, deck):
     header = ""
