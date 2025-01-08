@@ -9,7 +9,7 @@ authors = [
     { name = "Timo Früh", email = "dev@tifrueh.ch" }
 ]
 description = "convert asciidoc notes to anki notes"
-readme = { file = "README.adoc", content-type = "text/adoc" }
+readme = { file = "README.adoc", content-type = "text/markdown" }
 license = { file = "LICENSE.md" }
 
 [project.urls]

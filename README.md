@@ -1,17 +1,15 @@
-= ankidoc
-Timo Früh <dev@tifrueh.ch>
+# ankidoc
 
 `ankidoc` is a short python script intended to make writing
-https://apps.ankiweb.net[anki] notes in asciidoc easier.
+[anki](https://apps.ankiweb.net) notes in asciidoc easier.
 
-== Synopsis
+## Synopsis
 
-[source,plaintext]
-----
+```
 ankidoc [-h] [ -d | -n | -l ] [-o OUT] [-a ATTR] [-L LV] files
-----
+```
 
-== Short introduction
+## Short introduction
 
 The script can be used to generate a text file for import into anki from notes
 written in asciidoc.
@@ -26,13 +24,12 @@ and `ID.back`, ID being the unique note ID that was assigned to the note.
 If, for example, two notes, `NoteOne` and `NoteTwo` were to be created, four
 files would be needed for that:
 
-[source,plaintext]
-----
+```
 NoteOne.back
 NoteOne.front
 NoteTwo.back
 NoteTwo.front
-----
+```
 
 Now, the list of `.front` files desired to be in the final import file can be
 passed to `ankidoc`. The script will then find the corresponding `.back` files
@@ -40,7 +37,7 @@ passed to `ankidoc`. The script will then find the corresponding `.back` files
 a properly formatted anki import file named `out`. The name and location of the
 output file can be adjusted using the `-o` option.
 
-=== Anki Import File Format
+### Anki Import File Format
 
 When importing a file generated with `ankidoc` into anki, the following points
 should be considered
@@ -51,7 +48,7 @@ should be considered
    with three fields in the import, so that the note ID can be used to avoid
    duplicates and update already present notes instead.
 
-== More information
+## More information
 
 For more information and generally more detailed documentation, please refer to
 the manual page.
@@ -60,6 +57,6 @@ If you want to view the manual page without installing it, clone the repository
 and navigate your terminal to it. You can then use the `man` command on
 `ankidoc.1` to display the manual page as usual.
 
-== Dependencies
+## Dependencies
 
-* https://docs.asciidoctor.org/asciidoctor/latest/[asciidoctor]
+* [asciidoctor](https://docs.asciidoctor.org/asciidoctor/latest/)
