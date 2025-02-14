@@ -81,10 +81,17 @@ import file.
 .
 .TP
 .B Docgen mode
-In docgen mode \(em selected by specifying the \fB-d\fP option \(em
-\fBankidoc\fP will, instead of generating a import file, generate a HTML
-document out of the notes. This mode can, for example, be used to preview the
-notes before importing them into anki.
+Similarly to the notegen mode, when running in docgen mode, \fBankidoc\fP will
+only take in a single front file, but instead of producing HTML formatted as a
+note file, it produces an embeddable HTML document, complete with front matter
+in YAML, for use in static site generators like
+.UR https://gohugo.io
+HUGO
+.UE
+or
+.UR https://www.11ty.dev
+11ty
+.UE.
 .
 .SH OPTIONS
 .

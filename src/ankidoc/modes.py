@@ -5,7 +5,7 @@ import logging
 import os
 
 from ankidoc.anki import get_anki_header
-from ankidoc.adoc import str_to_file
+from ankidoc.adoc import str_to_str
 from ankidoc.notegen import notegen
 
 # Convert and add a note to an output file.
@@ -88,35 +88,56 @@ def docgen_mode(front_paths, output_path, attributes):
 
     logging.debug(f"operating in docgen mode on {front_paths}")
 
+    if len(front_paths) > 1:
+        logging.critical("cannot run in notegen mode when generating multiple files")
+        exit(1)
+
+    front_path = front_paths[0]
+
     adoc = ""
 
-    for front_path in front_paths:
+    id_path, ext = os.path.splitext(front_path)
 
-        id_path, ext = os.path.splitext(front_path)
+    if ext != ".front":
+        logging.warning(f"{front_path} is not a front file, skipping")
+        return
 
-        if ext != ".front":
-            logging.warning(f"{front_path} is not a front file, skipping")
-            continue
+    id = os.path.basename(id_path)
+    back_path = id_path + ".back"
+    tags_path = id_path + ".tags"
 
-        id = os.path.basename(id_path)
-        back_path = id_path + ".back"
+    if not os.path.isfile(front_path):
+        logging.warning(f"{front_path} is not a file, skipping")
+        return
+    elif not os.path.isfile(back_path):
+        logging.warning(f"{back_path} is not a file, skipping")
+        return
 
-        if not os.path.isfile(front_path):
-            logging.warning(f"{front_path} is not a file, skipping")
-            continue
-        elif not os.path.isfile(back_path):
-            logging.warning(f"{back_path} is not a file, skipping")
-            continue
+    if not os.path.isfile(tags_path):
+        tags_string = None
+    else:
+        with open(tags_path, "r") as tags_file:
+            tags_string = tags_file.read()
 
-        front_contents = ""
-        back_contents = ""
+    with open(front_path, "r") as front_file:
+        front_contents = front_file.read()
 
-        with open(front_path, "r") as front_file:
-            front_contents = front_file.read()
+    with open(back_path, "r") as back_file:
+        back_contents = back_file.read()
 
-        with open(back_path, "r") as back_file:
-            back_contents = back_file.read()
+    adoc += f"\n{front_contents}\n'''\n{back_contents}\n"
 
-        adoc += f"\n{front_contents}\n\n_{id}_\n\n{back_contents}\n"
+    html = "---\n"
+    html += f"title: {id}\n"
 
-    str_to_file(adoc, output_path, False, attributes)
+    if tags_string != None:
+        html += f"tags:\n"
+        for tag in tags_string.split():
+            html += f"- {tag}\n"
+
+    html += "---\n"
+
+    html += str_to_str(adoc, True, attributes)
+
+    with open(output_path, "w") as output:
+        output.write(html)
