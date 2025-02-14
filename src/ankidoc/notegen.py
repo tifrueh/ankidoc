@@ -18,6 +18,7 @@ def notegen(front_path, attributes):
 
     id = os.path.basename(id_path)
     back_path = id_path + ".back"
+    tags_path = id_path + ".tags"
 
     front = file_to_str(front_path, True, attributes)
     back = file_to_str(back_path, True, attributes)
@@ -25,7 +26,13 @@ def notegen(front_path, attributes):
     if front == None or back == None:
         return None
 
+    if not os.path.exists(tags_path):
+        tags = ""
+    else:
+        with open(tags_path, "r") as tags_file:
+            tags = tags_file.read()
+
     front = front.replace("\"", "\"\"")
     back = back.replace("\"", "\"\"")
 
-    return f"\"{id}\";\"{front}\";\"{back}\"\n"
+    return f"\"{id}\";\"{front}\";\"{back}\";\"{tags}\"\n"

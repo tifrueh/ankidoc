@@ -7,7 +7,8 @@ def get_anki_header(notetype, deck):
 
     header += "#separator:semicolon\n"
     header += "#html:true\n"
-    header += "#columns:id;front;back\n"
+    header += "#columns:id;front;back;tags\n"
+    header += "#tags column:4\n"
 
     if not notetype == None:
         header += f"#notetype:{notetype}\n"
