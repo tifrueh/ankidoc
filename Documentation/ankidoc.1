@@ -52,6 +52,13 @@ to HTML using the
 utility and output a properly formatted anki import file named \fIout\fP. The
 name and location of the output file can be adjusted using the \fB-o\fP option.
 .
+.P
+In addition to the \fIID.front\fP and \fIID.back\fP files, there is also the
+option to add a third file into the mix, the \fIID.tags\fP file. It should
+contain a space-separated list of tags that are to be added to the note. This
+is, however, entirely optional. If no \fI.tags\fP file can be found, the tags
+column of the resulting note will simply be empty.
+.
 .SS MODES
 .
 Besides the default mode described above, \fBankidoc\fP supports additional
