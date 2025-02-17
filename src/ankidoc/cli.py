@@ -42,6 +42,12 @@ def main():
     )
 
     parser.add_argument(
+        "-f", "--front-matter",
+        action="store_true",
+        help="add front matter in docgen mode"
+    )
+
+    parser.add_argument(
         "-L", "--loglevel",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         default="WARNING",
@@ -113,7 +119,7 @@ def main():
 
     # Run the program in the mode requested by the user.
     if args.docgen:
-        docgen_mode(args.files, args.output, args.attributes)
+        docgen_mode(args.files, args.output, args.attributes, args.front_matter)
     elif args.notegen:
         notegen_mode(args.files, args.output, args.attributes)
     elif args.link:

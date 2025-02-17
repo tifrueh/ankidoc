@@ -7,6 +7,7 @@ import os
 from ankidoc.anki import get_anki_header
 from ankidoc.adoc import str_to_str
 from ankidoc.notegen import notegen
+from ankidoc.docgen import get_front_matter
 
 # Convert and add a note to an output file.
 def convert_note(front_path, output, attributes):
@@ -81,7 +82,7 @@ def link_mode(note_paths, output_path, notetype, deck):
             link_note(note_path, output)
 
 # Run the program in docgen mode.
-def docgen_mode(front_paths, output_path, attributes):
+def docgen_mode(front_paths, output_path, attributes, front_matter):
 
     if output_path == None:
         output_path = "out.html"
@@ -125,18 +126,12 @@ def docgen_mode(front_paths, output_path, attributes):
     with open(back_path, "r") as back_file:
         back_contents = back_file.read()
 
-    adoc = "+++\n"
-    adoc += f"title = '{id}'\n"
+    adoc = ""
 
-    if tags_string != None:
-        adoc += f"tags = [ "
-        for tag in tags_string.split():
-            adoc += f"'{tag}', "
-        adoc += "\b\b ]\n"
+    if front_matter:
+        adoc = get_front_matter(id, tags_string)
 
-    adoc += "+++\n"
-
-    adoc += f"\n{front_contents}\n'''\n\n{back_contents}\n"
+    adoc += f"{front_contents}\n'''\n\n{back_contents}"
 
     with open(output_path, "w") as output:
         output.write(adoc)
