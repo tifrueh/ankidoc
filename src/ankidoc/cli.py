@@ -27,7 +27,7 @@ def main():
     parser.add_argument(
         "-d", "--docgen",
         action="store_true",
-        help="generate a single html document from the front files passed"
+        help="generate an asciidoc document from the front file passed"
     )
 
     parser.add_argument(

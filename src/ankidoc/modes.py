@@ -125,19 +125,18 @@ def docgen_mode(front_paths, output_path, attributes):
     with open(back_path, "r") as back_file:
         back_contents = back_file.read()
 
-    adoc += f"\n{front_contents}\n'''\n{back_contents}\n"
-
-    html = "---\n"
-    html += f"title: {id}\n"
+    adoc = "+++\n"
+    adoc += f"title = '{id}'\n"
 
     if tags_string != None:
-        html += f"tags:\n"
+        adoc += f"tags = [ "
         for tag in tags_string.split():
-            html += f"- {tag}\n"
+            adoc += f"'{tag}', "
+        adoc += "\b\b ]\n"
 
-    html += "---\n"
+    adoc += "+++\n"
 
-    html += str_to_str(adoc, True, attributes)
+    adoc += f"\n{front_contents}\n'''\n\n{back_contents}\n"
 
     with open(output_path, "w") as output:
-        output.write(html)
+        output.write(adoc)
