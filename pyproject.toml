@@ -1,5 +1,5 @@
 [build-system]
-requires = [ "setuptools >= 64" ]
+requires = [ "setuptools >= 64", "setuptools-scm >= 8" ]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -23,5 +23,6 @@ ankidoc = "ankidoc.cli:main"
     "Documentation/ankidoc.1"
 ]
 
-[tool.setuptools.dynamic]
-version = { attr = "ankidoc.__version__" }
+[tool.setuptools_scm]
+version_file = "src/ankidoc/_version.py"
+fallback_version = "v0.2.0+git"

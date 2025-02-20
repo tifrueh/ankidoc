@@ -1,1 +1,3 @@
-__version__ = "v0.2.0+git"
+import ankidoc._version as v
+
+__version__ = v.version
