@@ -25,4 +25,4 @@ ankidoc = "ankidoc.cli:main"
 
 [tool.setuptools_scm]
 version_file = "src/ankidoc/_version.py"
-fallback_version = "v0.2.0+git"
+fallback_version = "v0.3.0-rc1"
