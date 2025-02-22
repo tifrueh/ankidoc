@@ -4,10 +4,10 @@
 import argparse
 import logging
 
-from ankidoc.modes import default_mode
-from ankidoc.modes import notegen_mode
-from ankidoc.modes import link_mode
-from ankidoc.modes import docgen_mode
+from ankidoc.default_mode import run as default_mode
+from ankidoc.notegen_mode import run as notegen_mode
+from ankidoc.link_mode import run as link_mode
+from ankidoc.docgen_mode import run as docgen_mode
 from ankidoc import __version__
 
 def main():
