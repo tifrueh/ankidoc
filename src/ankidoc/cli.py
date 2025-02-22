@@ -8,6 +8,7 @@ from ankidoc.default_mode import run as default_mode
 from ankidoc.notegen_mode import run as notegen_mode
 from ankidoc.link_mode import run as link_mode
 from ankidoc.docgen_mode import run as docgen_mode
+from ankidoc.preview_mode import run as preview_mode
 from ankidoc import __version__
 
 def main():
@@ -28,6 +29,12 @@ def main():
         "-d", "--docgen",
         action="store_true",
         help="generate an asciidoc document from the front file passed"
+    )
+
+    parser.add_argument(
+        "-p", "--preview",
+        action="store_true",
+        help="generate a html preview from the note"
     )
 
     parser.add_argument(
@@ -124,6 +131,8 @@ def main():
         notegen_mode(args.files, args.output, args.attributes)
     elif args.link:
         link_mode(args.files, args.output, args.notetype, args.deck)
+    elif args.preview:
+        preview_mode(args.files, args.output, args.attributes)
     else:
         default_mode(args.files, args.output, args.attributes, args.notetype, args.deck)
 
