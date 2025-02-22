@@ -28,13 +28,13 @@ def main():
     parser.add_argument(
         "-d", "--docgen",
         action="store_true",
-        help="generate an asciidoc document from the front file passed"
+        help="docgen mode - generate an asciidoc document"
     )
 
     parser.add_argument(
         "-p", "--preview",
         action="store_true",
-        help="generate a html preview from the note"
+        help="preview mode - generate a html preview"
     )
 
     parser.add_argument(
@@ -45,7 +45,7 @@ def main():
     parser.add_argument(
         "-l", "--link",
         action="store_true",
-        help="link the note files passed into one anki import file"
+        help="link mode - link the note files passed into one anki import file"
     )
 
     parser.add_argument(
@@ -65,7 +65,7 @@ def main():
     parser.add_argument(
         "-n", "--notegen",
         action="store_true",
-        help="compile the front/back files passed into note files"
+        help="notegen mode - generate a note file"
     )
 
     parser.add_argument(
