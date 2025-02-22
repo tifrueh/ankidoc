@@ -143,7 +143,7 @@ def anote_to_hnstr(input_path, embedded, attributes):
 
     front_path = os.path.join(input_path, "front.adoc")
     back_path = os.path.join(input_path, "back.adoc")
-    tags_path = os.path.join(input_path, "tags.adoc")
+    tags_path = os.path.join(input_path, "tags.txt")
 
     if not os.path.isfile(front_path):
         logging.warning(f"reading front from {front_path} failed: not a file")
@@ -195,7 +195,7 @@ def anote_to_astr(input_path, front_matter):
 
     front_path = os.path.join(input_path, "front.adoc")
     back_path = os.path.join(input_path, "back.adoc")
-    tags_path = os.path.join(input_path, "tags.adoc")
+    tags_path = os.path.join(input_path, "tags.txt")
 
     if not os.path.isfile(front_path):
         logging.warning(f"reading front from {front_path} failed: not a file")
