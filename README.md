@@ -15,27 +15,17 @@ The script can be used to generate a text file for import into anki from notes
 written in asciidoc.
 
 The asciidoc notes need to be in a specific format in order for the script to
-be able to work with them; The idea is that each note -- or at least each of the
-notes the user wants to have in one deck -- is assigned a unique ID. It is then
-split into two asciidoc files, one with the content of the front side of the
-note, and one of the back side. These two files must now be saved as `ID.front`
-and `ID.back`, ID being the unique note ID that was assigned to the note.
+be able to work with them; Every note needs to be a directory with its name
+ending in `.anote`, containing three files:
 
-If, for example, two notes, `NoteOne` and `NoteTwo` were to be created, four
-files would be needed for that:
+* `front.adoc`: An asciidoc file containing everything that should be on the
+  front side of the note.
 
-```
-NoteOne.back
-NoteOne.front
-NoteTwo.back
-NoteTwo.front
-```
+* `back.adoc`: An asciidoc file containing everything that should be on the
+  back side of the note.
 
-Now, the list of `.front` files desired to be in the final import file can be
-passed to `ankidoc`. The script will then find the corresponding `.back` files
-(which have to be in the same directory), convert all files to HTML and output
-a properly formatted anki import file named `out`. The name and location of the
-output file can be adjusted using the `-o` option.
+* `tags.txt`: A text file containing space-separated tags for the note. This
+  file is optional, but its absence _will_ throw a warning.
 
 ### Anki Import File Format
 
@@ -43,10 +33,11 @@ When importing a file generated with `ankidoc` into anki, the following points
 should be considered
 
 1. `ankidoc` separates note fields with a semicolon (`;`).
-2. `ankidoc` creates all notes with *three* fields: the previously defined note
-   ID, the front side and the back side. It is recommended to use a note type
-   with three fields in the import, so that the note ID can be used to avoid
-   duplicates and update already present notes instead.
+2. `ankidoc` creates all notes with *four* fields: the ID of the note (the
+   filename of the note without ".anote"), the front side, the back side and
+   the tags. It is recommended to use a note type with some kind of ID field in
+   the import, so that the note ID can be used to avoid duplicates and update
+   already present notes instead.
 
 ## More information
 

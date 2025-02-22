@@ -1,4 +1,4 @@
-.TH ANKIDOC 1 2024-12-31 "ankidoc v0.2.0+git"
+.TH ANKIDOC 1 2025-02-21 "ankidoc v0.2.0+git"
 .
 .SH NAME
 
@@ -36,28 +36,31 @@ from notes written in asciidoc.
 .
 .P
 The asciidoc notes need to be in a specific format in order for the script to
-be able to work with them; The idea is that each note \(em or at least each of
-the notes the user wants to have in one deck \(em is assigned a unique ID. It
-is then split into two asciidoc files, one with the content of the front side
-of the note, and one of the back side. These two files must now be saved as
-\fIID.front\fP and \fIID.back\fP, ID being the unique note ID that was assigned
-to the note.
+be able to work with them; Every note needs to be a directory with its name
+ending in \fI.anote\fP. The name of this directory (excluding the extension),
+will become the ID of the note in the final import file.
 .
 .P
-Then the list of \fI.front\fP files desired to be in the final import file can
-be passed to \fBankidoc\fP. The script will then find the corresponding
-\fI.back\fP files (which have to be in the same directory), convert all files
-to HTML using the
-.BR asciidoctor (1)
-utility and output a properly formatted anki import file named \fIout\fP. The
-name and location of the output file can be adjusted using the \fB-o\fP option.
+For everything to work correctly, this directory must contain three files:
+.
+.TP
+.I front.adoc
+An asciidoc file containing everything that should be on the front side of the
+note.
+.
+.TP
+.I back.adoc
+An asciidoc file containing everything that should be on the back side of the
+note.
+.
+.TP
+.I tags.txt
+A text file containing space-separated tags for the note. This file is
+optional, but its absence _will_ throw a warning.
 .
 .P
-In addition to the \fIID.front\fP and \fIID.back\fP files, there is also the
-option to add a third file into the mix, the \fIID.tags\fP file. It should
-contain a space-separated list of tags that are to be added to the note. This
-is, however, entirely optional. If no \fI.tags\fP file can be found, the tags
-column of the resulting note will simply be empty.
+In its default operating mode, \fBankidoc\fP will take a list of such anote
+directories as input and generate a single anki import file out of them.
 .
 .SS MODES
 .
@@ -67,11 +70,10 @@ modes that work slightly differently.
 .TP
 .B Notegen mode
 In notegen mode \(em selected by specifying the \fB-n\fP option \(em
-\fBankidoc\fP will only take in one single front file, find its corresponding
-back file, convert both sides and output a \(dqnote\(dq file, which essentially
-corresponds to a single note how it would appear in the final import file
-generated in default mode. These note files can then be linked into an anki
-import file using the link mode.
+\fBankidoc\fP will only take in one single anote directory and output a
+\(dqnote\(dq file, which essentially corresponds to a single note how it would
+appear in the final import file generated in default mode. These note files can
+then be linked into an anki import file using the link mode.
 .
 .TP
 .B Link mode
@@ -82,8 +84,8 @@ import file.
 .TP
 .B Docgen mode
 Similarly to the notegen mode, when running in docgen mode, \fBankidoc\fP will
-only take in a single front file, but instead of producing HTML formatted as a
-note file, it produces an asciidoc document.
+only take in a single anote directory, but instead of producing HTML formatted
+as a note file, it produces an asciidoc document.
 .
 .SH OPTIONS
 .
@@ -134,10 +136,9 @@ Display version information.
 .
 .TP
 .I files
-Specify the files to operate on. Note that these generally have to be
-\fI.front\fP files with existing corresponding \fI.back\fP files in oder for
-\fBankidoc\fP to work. This is except when operating in link mode, in which
-case this option has to be one single \fI.note\fP file.
+Specify the files to operate on. Note that these generally have to be one ore
+multiple \fI.anote\fP directories in oder for \fBankidoc\fP to work. When
+operating in link mode, however, these files have to be \fI.note\fP files.
 .
 .SH EXIT STATUS
 .
