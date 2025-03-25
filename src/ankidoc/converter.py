@@ -213,12 +213,17 @@ def anote_to_astr(input_path, front_matter):
 
     tags = read_tags(tags_path)
 
+    if not tags:
+        tags_str = ""
+    else:
+        tags_str = " ".join(tags)
+
     astr = ""
 
     if front_matter:
         astr += get_front_matter(id, tags)
 
-    astr += f"{front_astr}\n'''\n\n{back_astr}"
+    astr += f"{front_astr}\n'''\n\n{back_astr}\n'''\n{tags_str}"
 
     return astr
 
