@@ -243,7 +243,7 @@ def anote_to_adoc(input_path, output_path, front_matter):
 def anote_to_hstr(input_path, embedded, attributes):
 
     astr = anote_to_astr(input_path, False)
-    
+
     if not astr:
         return None
 
