@@ -222,8 +222,9 @@ def anote_to_astr(input_path, front_matter):
 
     if front_matter:
         astr += get_front_matter(id, tags)
-
-    astr += f"{front_astr}\n'''\n\n{back_astr}\n'''\n{tags_str}"
+        astr += f"{front_astr}\n'''\n\n{back_astr}\n"
+    else:
+        astr += f"{front_astr}\n'''\n\n{back_astr}\n'''\n{tags_str}"
 
     return astr
 
